@@ -28,19 +28,19 @@ fi
 find "$source_dir" -maxdepth 1 -print0 | while IFS= read -r -d $'\0' filename; do
     base_filename="$(basename "$filename")"
 
-    # if [ "$source_dir" == "$filename" ]; then
-    # continue
-    # fi
-
-    if [ "$base_filename" != "mygame" ]; then
-      cp -R "$filename" .
-      echo "Copying: "$base_filename" ..."
+    # dont copy the inner directory.
+    if [ "$source_dir" = "$filename" ]; then
+      continue
     fi
 
-    # This is specific to this library.
-    if [ "$base_filename" = "mygame" ]; then
-      cp -R "$filename/app/repl.rb" "$destination_dir/app/repl.rb"
+    if [ "$base_filename" = "mygame" ] && [ -d "$destination_dir/mygame" ]; then
+      # "mygame" already exists. Don't overwrite it.
+      continue
     fi
+
+    cp -R "$filename" .
+    echo "Copying: "$base_filename" ..."
 done
 
 echo "All directories copied successfully."
+
